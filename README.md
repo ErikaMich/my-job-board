@@ -1,11 +1,11 @@
 # My Job Board
 
-A small, run-it-yourself job board for **product designers** (but customizable for other roles too). 
+A small, run-it-yourself job board for **product designers** (customizable for other roles too). 
 
-It gathers roles from a dozen job boards and a watchlist of companies, filters
+One script gathers roles from a dozen job boards and a watchlist of companies, filters
 them down to what you want, optionally uses Claude to score how well each one
-fits *your profile*, and collects them into a single personal board. No
-account, no SaaS, no data leaving your computer.
+fits *your profile*, and collects them into a single page. No
+account, no data leaving your computer.
 
 If you're not a designer you can change the roles list and make it yours (see **[Making it your own](#making-it-your-own)**).
 
@@ -16,10 +16,7 @@ If you're not a designer you can change the roles list and make it yours (see **
 LinkedIn's search is broken and job hunting means checking a dozen different boards by hand, over and over.
 Most of those boards are fetching jobs from company websites and ATS, and some even ask you to pay to see the most recent jobs, which I find despicable. You shouldn't have to pay to find a job.
 
-So I built my own system: one script that sweeps all those boards for me and gathers the
-relevant postings into a single page. It saves the time-consuming part, finding the open positions, while leaving
-the application to me. It does **not** auto-apply, as I still prefer to read each opening and
-judge for myself whether it's worth pursuing.
+Mind that **it does not auto-apply**, as I still prefer to read each opening and judge for myself whether it's worth pursuing.
 
 ## How it works
 
@@ -105,4 +102,4 @@ if you distribute it or run a modified version as a network service, you have to
 make your source available under the same license. In plain terms: nobody gets
 to take this, close it up, and sell it as a proprietary product. Keep it open.
 
-Copyright (C) 2026 Erika Michielon.
+Copyright (C) 2026 [Erika Michielon](https://erikamichielon.com/).
