@@ -1,56 +1,38 @@
 # My Job Board
 
-A small, run-it-yourself job board for **product designers** (but customizable for other roles too). It gathers new
-product/design roles from a dozen job boards and a watchlist of companies, filters
+A small, run-it-yourself job board for **product designers** (but customizable for other roles too). 
+
+It gathers roles from a dozen job boards and a watchlist of companies, filters
 them down to what you want, optionally uses Claude to score how well each one
-fits *you*, and collects them into a single personal board — all on your machine. No
+fits *your profile*, and collects them into a single personal board. No
 account, no SaaS, no data leaving your computer.
 
-It ships with a ready-made watchlist and a product-designer filter, so it's useful on
-first run — then you make it yours (see **[Making it your own](#making-it-your-own)**).
+If you're not a designer you can change the roles list and make it yours (see **[Making it your own](#making-it-your-own)**).
+
+![The generated job board — one card per role with a fit score, filters, and a source/watchlist sidebar](assets/my-job-board.png)
 
 ## Why I built this
 
-Job hunting meant checking a dozen different boards by hand, over and over. LinkedIn's
-search is broken enough that I couldn't rely on it, and a lot of the other boards want
-to **charge you** to see or apply to listings — which, for someone who's out of work and
-looking, I find despicable. You shouldn't have to pay to find a job.
+LinkedIn's search is broken and job hunting means checking a dozen different boards by hand, over and over.
+Most of those boards are fetching jobs from company websites and ATS, and some even ask you to pay to see the most recent jobs, which I find despicable. You shouldn't have to pay to find a job.
 
 So I built my own system: one script that sweeps all those boards for me and gathers the
-relevant postings into a single page, instead of clicking through every site
-manually. It saves the time-consuming part — the *finding* — while deliberately leaving
-the *deciding* to me. It does **not** auto-apply: I still want to read each opening and
+relevant postings into a single page. It saves the time-consuming part, finding the open positions, while leaving
+the application to me. It does **not** auto-apply, as I still prefer to read each opening and
 judge for myself whether it's worth pursuing.
 
 ## How it works
 
-```mermaid
-flowchart TD
-    S["Job boards + company watchlist"] --> G["Gather new listings"]
-    G --> F{"Matches your titles<br/>and location?"}
-    F -- no --> X["Discard"]
-    F -- yes --> DUP{"Already on<br/>your board?"}
-    DUP -- yes --> X
-    DUP -- no --> AI["Score fit with Claude<br/>(optional — needs an API key)"]
-    AI --> SHEET[("Local spreadsheet")]
-    SHEET --> BOARD["Your job board<br/>(HTML, opens in your browser)"]
-    BOARD --> YOU["You review the openings<br/>and apply — yourself"]
-    BOARD -.-> CV["Generate a tailored CV<br/>(optional)"]
-```
+![How it works: npm start pulls from job boards and a company watchlist; new listings are optionally scored for fit by Claude using your files, saved to a local spreadsheet, and shown as your job board — which you review and apply to yourself, with an optional tailored CV](assets/how-it-works.png)
 
-You run it whenever you want to check for new roles; each run gathers, filters, scores,
-and refreshes the board. It never applies to anything for you.
+Each time you run it, the project:
+1. Checks a handful of job boards, plus your watchlist of companies, for new design/product listings
+2. Filters out anything that doesn't match your target job titles or location
+3. Skips anything already in your spreadsheet, so nothing gets logged twice
+4. If you've set an Anthropic API key, sends what's new to Claude for a plain-language summary, pros/cons, and a 1–10 fit score; without a key it just logs the raw listing details
+5. Writes it all to a local spreadsheet and opens your job board — an HTML page — to review
 
-## What this does, in plain English
-
-Each time you run it, this project:
-1. Checks a handful of job boards, plus a specific list of companies, for new design/product listings
-2. Filters out anything that doesn't match your target job titles or isn't your-location-friendly
-3. Skips anything already sitting in your spreadsheet, so nothing gets logged twice
-4. If you've set up an Anthropic API key, sends whatever's genuinely new to Claude, which reads each listing and fills in the details — salary, a plain-language summary, pros, cons, and a 1-10 fit score against your background and what you're looking for. Without a key, it logs the raw listing details instead, with no AI summary or fit score.
-5. Adds one new row per listing to a local spreadsheet file, right in this project folder
-
-There's no automatic scheduling here — you run it yourself, whenever you want to check for new listings (once a day, a few times a week, whatever suits you). Because it always checks the spreadsheet for what's already there before adding anything, running it more or less often never causes duplicates — it just changes how far back each run reaches.
+You run it yourself, as often as you like. It never auto-applies, and because it always checks the spreadsheet first, running it more or less often never creates duplicates.
 
 ---
 
@@ -58,14 +40,14 @@ There's no automatic scheduling here — you run it yourself, whenever you want 
 
 The Anthropic API key is optional. Without one, the script still gathers, filters, and dedupes listings and logs them to the spreadsheet — you just get the raw title/company/location/link/salary as posted, with no AI-written summary, company description, pros/cons, or fit score, and "Other Notes" says the key wasn't set. With a key it's pay-as-you-go and cheap — see [Costs](#costs) for a worked estimate (roughly $1–2/month running it daily, using Haiku).
 
-The fit score is scored against the candidate background in `CANDIDATE_PROFILE` in `config.js` — update that whenever your experience or what you're looking for changes, since it's the only thing the scoring depends on.
+The fit score is graded against `CANDIDATE_PROFILE` and `FIT_PRIORITIES` in `config.js` — keep those updated as your experience or what you're looking for changes, since together they're what the scoring depends on.
 
 ### 1. An Anthropic API key (optional)
 - Go to `console.anthropic.com` and create an account if you don't already have one
 - Under **Billing**, add a payment method — the API is billed separately from any Claude.ai subscription, per token used
 - Go to **API Keys**, create a new key, and copy it somewhere safe — you won't be able to view it again after this
 
-The spreadsheet itself needs no setup at all — `job-listings.xlsx` gets created automatically, right in this project folder, the first time the script runs. Open it directly in Excel or Numbers whenever you want to check on it, or drag it into Google Sheets if you'd rather work with it there — it's a completely standard file, nothing about it is locked to any one app.
+The spreadsheet needs no setup — `job-listings.xlsx` is created automatically in this folder on the first run. It's a standard file: open it in Excel, Numbers, or Google Sheets any time.
 
 ### 2. The watchlist (optional — it already works)
 The `WATCHLIST` in `config.js` ships pre-filled with ~150 companies, each with a confirmed ATS token, so it works out of the box — there's nothing to set up here. Skip straight to running it unless you want to tune the list.
@@ -89,20 +71,14 @@ That's it — no scheduling, no background setup. Steps 1–3 are one-time; from
 
 ---
 
-## What's still a best-effort heuristic, not a guarantee
-
-- **Location filtering** is plain text matching — does the listing mention Europe, Ireland, or a specific European country. Job boards phrase location wildly inconsistently, so expect the occasional wrong result, and adjust the keyword list in `config.js` as you notice patterns.
-- **If a watchlist company switches their careers system**, their `ats`/`token` in `config.js` will need updating — this happens occasionally as companies grow.
-- **The spreadsheet only exists on this Mac** — unlike Google Sheets, there's no automatic cloud copy. If you want that safety net without changing anything else about the setup, put this whole project folder inside an iCloud Drive, Dropbox, or similar synced folder — the script won't care, and your data gets backed up as a side effect.
-
 ## Costs
 
 - **Job board and ATS lookups:** free.
 - **Claude API:** optional and cheap. It uses Claude Haiku, and only *new* listings are ever sent to it — anything already in your spreadsheet is skipped, so you never pay to re-score the same job twice.
 
-A worked estimate: say you run it **once a day**, and after the first run each day surfaces **20–40 genuinely new listings**. Each listing is a few hundred tokens in and out, so a day's run costs on the order of a few cents. Over a month that lands around **$1–2**. Run it a few times a week instead of daily and it's **well under $1/month**. The very first run is the most expensive one — it scores everything it finds at once — but it's still cents, not dollars.
+A worked estimate: say you run it **once a day**, and after the first run each day surfaces **20–40 new listings**. Each listing is a few hundred tokens in and out, so a day's run costs on the order of a few cents. Over a month that lands around **$1–2**.
 
-These are ballpark figures at Haiku's pay-as-you-go rates, meant to set expectations, not a guarantee — your actual bill depends on how often you run it and how many new roles show up. You can always skip the API key entirely and run for free, with no AI summaries or fit scores.
+These are ballpark figures at Haiku's pay-as-you-go rates, your actual bill depends on how often you run it and how many new roles show up. You can always skip the API key entirely and run for free, with no AI summaries or fit scores.
 
 ## Making it your own
 
