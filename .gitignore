@@ -1,0 +1,22 @@
+node_modules/
+.env
+.DS_Store
+*.log
+npm-debug.log*
+.claude/settings.local.json
+job-listings.html
+source-status.json
+# Personal CV files — your real CV and its tailored outputs. The committed
+# example templates (cv/*.example.*, cv/README.md, cv/generated/.gitkeep) are
+# re-included below so the folder's structure ships without your data.
+cv/master-cv.docx
+cv/experience-notes.md
+cv/generated/*
+!cv/generated/.gitkeep
+
+# Personal data — your own job listings and any backups. The spreadsheet is
+# created automatically on first run; it should never be committed.
+*.xlsx
+
+# Local-only rescue copy of your real candidate profile (see README).
+MY_PROFILE.backup.txt
